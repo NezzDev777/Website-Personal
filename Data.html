@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NezzDev — Ultimate Sales Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c1a;--bg2:#101025;--bg3:#15152e;--card:#0e0e1f;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --accent:#7c5cfc;--accent2:#a78bfa;--teal:#2dd4bf;
+  --amber:#fbbf24;--red:#f87171;--green:#4ade80;
+  --text:#f0eeff;--text2:#8e8aad;--text3:#4e4b6a;
+  --r:14px;--rs:8px;
+}
+
+/* Theme: Pink */
+[data-theme="pink"]{
+  --bg:rgba(20,5,15,0.95);--bg2:rgba(35,12,25,0.95);--bg3:rgba(45,18,30,0.95);--card:rgba(30,15,22,0.95);
+  --accent:#ec4899;--accent2:#f472b6;--teal:#f9a8d4;
+  --border:rgba(236,72,153,0.15);--border2:rgba(236,72,153,0.25);
+  --text:#fef0f5;--text2:#d4a5c4;--text3:#8a5a7a;
+}
+
+/* Theme: Purple (Default) */
+[data-theme="purple"]{
+  --bg:rgba(12,12,26,0.95);--bg2:rgba(16,16,35,0.95);--bg3:rgba(21,21,46,0.95);--card:rgba(14,14,31,0.95);
+  --accent:#7c5cfc;--accent2:#a78bfa;--teal:#2dd4bf;
+  --border:rgba(124,92,252,0.12);--border2:rgba(124,92,252,0.22);
+  --text:#f0eeff;--text2:#8e8aad;--text3:#4e4b6a;
+}
+
+/* Theme: Black */
+[data-theme="black"]{
+  --bg:rgba(0,0,0,0.97);--bg2:rgba(8,8,10,0.97);--bg3:rgba(12,12,15,0.97);--card:rgba(10,10,12,0.97);
+  --accent:#ffffff;--accent2:#e0e0e0;--teal:#888888;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --text:#ffffff;--text2:#aaaaaa;--text3:#555555;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;overflow-x:hidden}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:224px;background:var(--bg2);backdrop-filter:blur(20px);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;padding:0 0 1.5rem}
+.logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border);margin-bottom:.75rem;display:flex;align-items:center;gap:12px}
+.logo-img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);box-shadow:0 0 15px rgba(124,92,252,.4)}
+.logo-text{flex:1}
+.logo-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.5px;color:var(--text);line-height:1.2}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+.nav{flex:1;padding:0 .75rem;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rs);cursor:pointer;color:var(--text2);font-size:13.5px;font-weight:400;transition:all .2s;user-select:none;position:relative;overflow:hidden}
+.nav-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),#c084fc);border-radius:0 3px 3px 0;transform:scaleY(0);transition:transform .22s}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;transition:transform .2s}
+.nav-item:hover{background:rgba(124,92,252,.1);color:var(--accent2);transform:translateX(3px)}
+.nav-item:hover svg{transform:scale(1.12)}
+.nav-item.active{background:rgba(124,92,252,.14);color:var(--accent2);font-weight:500}
+.nav-item.active::before{transform:scaleY(1)}
+.nav-section{font-size:9.5px;color:var(--text3);letter-spacing:1.3px;text-transform:uppercase;padding:14px 12px 4px;margin-top:4px}
+
+/* MAIN */
+.main{margin-left:224px;min-height:100vh;padding:0 0 3rem;position:relative;z-index:1}
+.topbar{padding:1.1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50}
+.page-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.page-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.save-chip{font-size:11.5px;color:var(--text3);background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.14);border-radius:20px;padding:4px 11px;display:flex;align-items:center;gap:6px;transition:all .3s}
+.save-chip::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;animation:blink 2s infinite}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--card);color:var(--text2);transition:all .18s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--bg3);color:var(--text);border-color:rgba(124,92,252,.35)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#9b7cfc);border-color:transparent;color:#fff;box-shadow:0 4px 16px rgba(124,92,252,.3)}
+.btn-primary:hover{background:linear-gradient(135deg,#6d4ef0,var(--accent));transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,92,252,.45)}
+.btn svg{width:14px;height:14px}
+.content{padding:1.75rem 2rem}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block;animation:panelIn .35s cubic-bezier(.23,1,.32,1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.75rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.25rem;position:relative;overflow:hidden;transition:transform .2s,border-color .25s;cursor:default}
+.stat-card:hover{transform:translateY(-2px);border-color:rgba(124,92,252,.22)}
+.stat-card::after{content:'';position:absolute;top:-25px;right:-25px;width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,252,.07),transparent 70%)}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:7px}
+.stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1}
+.stat-sub{font-size:11.5px;color:var(--text3);margin-top:5px}
+
+/* CARDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;transition:border-color .22s}
+.card:hover{border-color:rgba(124,92,252,.16)}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600}
+
+/* BAR CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:150px;margin-top:8px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--accent) 0%,rgba(124,92,252,.2) 100%);min-height:4px;cursor:pointer;position:relative;transition:filter .18s,transform .18s}
+.bar:hover{filter:brightness(1.35);transform:scaleY(1.05);transform-origin:bottom}
+.bar:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;font-size:11.5px;white-space:nowrap;color:var(--text);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.bar-label{font-size:9.5px;color:var(--text3);margin-top:5px}
+.bar-grow{animation:barGrow .7s cubic-bezier(.23,1,.32,1) both}
+@keyframes barGrow{from{transform:scaleY(0) translateY(0);opacity:0;transform-origin:bottom}to{transform:scaleY(1);opacity:1}}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 12px;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13.5px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr{transition:background .12s}
+tr:hover td{background:rgba(124,92,252,.04)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:500}
+.badge-green{background:rgba(74,222,128,.1);color:var(--green)}
+.badge-amber{background:rgba(251,191,36,.1);color:var(--amber)}
+.badge-purple{background:rgba(124,92,252,.13);color:var(--accent2)}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* INPUTS */
+.form-row{display:grid;gap:12px}
+.form-row-2{grid-template-columns:1fr 1fr}
+.form-row-3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:12px;color:var(--text2);font-weight:500}
+input,select,textarea{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);color:var(--text);padding:8px 12px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;transition:border .18s,box-shadow .18s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,252,.15)}
+select option{background:var(--bg3)}
+textarea{resize:vertical;min-height:60px}
+
+/* PRE-ORDER TABLE */
+.po-row{display:grid;grid-template-columns:2fr 0.6fr 1.2fr 1.2fr 90px;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);transition:background .12s}
+.po-row:hover{background:rgba(124,92,252,.04)}
+.po-head{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:8px 12px;border-bottom:1px solid var(--border2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#c084fc);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.buyer-name{display:flex;align-items:center;gap:8px}
+.check-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;cursor:pointer;border:1.5px solid var(--border2);background:transparent;color:var(--text3);transition:all .2s}
+.check-btn:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.08);transform:scale(1.12)}
+.check-btn.paid{background:rgba(74,222,128,.12);border-color:var(--green);color:var(--green)}
+.check-btn svg{width:13px;height:13px}
+.actions-cell{display:flex;gap:5px}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:5px;cursor:pointer;color:var(--text3);transition:all .15s}
+.icon-btn:hover{border-color:rgba(248,113,113,.4);color:var(--red);background:rgba(248,113,113,.06)}
+.icon-btn svg{width:13px;height:13px;display:block}
+
+/* PROGRESS */
+.progress-bar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width .8s cubic-bezier(.23,1,.32,1)}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text3)}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid rgba(74,222,128,.22);border-radius:10px;padding:10px 16px;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(80px) scale(.9);opacity:0;transition:all .3s cubic-bezier(.23,1,.32,1);z-index:300;display:flex;align-items:center;gap:8px}
+#toast.show{transform:translateY(0) scale(1);opacity:1}
+#toast .tdot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(124,92,252,.3);border-radius:3px}
+
+.theme-option:hover{background:rgba(124,92,252,.08)}
+.theme-option.active{background:rgba(124,92,252,.12)}
+
+.note{font-size:12px;color:var(--text3);font-style:italic;margin-top:3px}
+
+/* INLINE FORM */
+.inline-form{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.inline-form::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--teal),#c084fc,var(--accent));background-size:200% 100%;animation:flow 3s linear infinite}
+@keyframes flow{0%{background-position:0% 0}100%{background-position:200% 0}}
+
+/* ORB & PARTICLE */
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:orbF ease-in-out infinite alternate}
+@keyframes orbF{from{transform:translate(0,0) scale(1)}to{transform:translate(25px,18px) scale(1.07)}}
+.ptc{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:ptcF linear infinite}
+@keyframes ptcF{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.7}90%{opacity:.3}100%{transform:translateY(-10vh) scale(1.1);opacity:0}}
+
+/* LOGIN SCREEN */
+.login-overlay{position:fixed;inset:0;z-index:9998;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:opacity 0.8s ease-out;}
+.login-overlay.hidden{opacity:0;pointer-events:none;}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0a0a0a 0%,#000 70%);}
+.login-lines{position:absolute;inset:0;overflow:hidden;}
+.login-line{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,#1a1a1a,transparent);animation:lineMove 8s linear infinite;}
+@keyframes lineMove{0%{transform:translateY(-100%);}100%{transform:translateY(100vh);}}
+.login-content{position:relative;z-index:2;text-align:center;width:100%;max-width:360px;padding:0 24px;}
+.login-logo-wrap{position:relative;display:inline-block;margin-bottom:24px;}
+.login-logo{width:90px;height:90px;border-radius:20px;object-fit:cover;border:2px solid var(--accent);box-shadow:0 0 30px rgba(124,92,252,0.3),0 0 60px rgba(124,92,252,0.1);transition:all 0.5s ease;}
+.login-logo:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(124,92,252,0.5),0 0 80px rgba(124,92,252,0.2);}
+.login-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-1px;text-shadow:0 0 30px rgba(124,92,252,0.5);}
+.login-subtitle{font-size:12px;color:#444;margin-bottom:32px;letter-spacing:2px;text-transform:uppercase;}
+.login-form{background:rgba(10,10,10,0.9);backdrop-filter:blur(30px);border:1px solid #1a1a1a;border-radius:16px;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.03);}
+.login-field{margin-bottom:16px;text-align:left;}
+.login-field label{font-size:11px;color:#555;font-weight:600;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:1.5px;}
+.login-field input{width:100%;padding:14px 16px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.3s ease;outline:none;}
+.login-field input:focus{border-color:#7c5cfc;box-shadow:0 0 0 3px rgba(124,92,252,0.15),0 0 20px rgba(124,92,252,0.1);background:#0d0d0d;}
+.login-field input::placeholder{color:#333;}
+.login-error{background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);border-radius:10px;padding:14px;margin-bottom:16px;color:#ef4444;font-size:13px;display:none;align-items:center;gap:10px;font-weight:500;}
+.login-error.show{display:flex !important;}
+.login-error svg{width:18px;height:18px;flex-shrink:0;}
+.login-btn{width:100%;padding:15px;background:#7c5cfc;border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:600;font-family:'Syne',sans-serif;cursor:pointer;transition:all 0.3s ease;letter-spacing:1px;text-transform:uppercase;}
+.login-btn:hover{background:#6d4ef0;transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,92,252,0.4);}
+.login-btn:active{transform:translateY(0);}
+.login-btn svg{width:18px;height:18px;}
+.login-btn.loading{pointer-events:none;opacity:0.6;}
+.login-footer{font-size:10px;color:#333;margin-top:24px;letter-spacing:1px;}
+.login-version{position:absolute;bottom:30px;font-size:10px;color:#222;letter-spacing:2px;}
+
+/* LOADING SCREEN */
+.loader-overlay{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:opacity 0.8s ease-out;}
+.loader-overlay.hidden{opacity:0;pointer-events:none;}
+.loader-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0a0a0a 0%,#000 70%);}
+.loader-scanline{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scanMove 3s linear infinite;opacity:0.6;}
+@keyframes scanMove{0%{top:0;opacity:0.6;}100%{top:100%;opacity:0;}}
+.loader-matrix{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;}
+.loader-col{position:absolute;font-family:'Courier New',monospace;font-size:16px;color:var(--accent);opacity:0.15;animation:matrixFall linear infinite;white-space:nowrap;line-height:1.2;}
+@keyframes matrixFall{0%{transform:translateY(-100%);}100%{transform:translateY(calc(100vh + 100%));}}
+.loader-content{position:relative;z-index:2;text-align:center;}
+.loader-logo-wrap{position:relative;display:inline-block;margin-bottom:30px;}
+.loader-logo{width:110px;height:110px;border-radius:24px;object-fit:cover;border:2px solid var(--accent);box-shadow:0 0 40px var(--accent),0 0 80px rgba(124,92,252,0.3);animation:logoGlitch 3s ease-in-out infinite,logoShimmer 2s ease-in-out infinite;}
+@keyframes logoGlitch{0%,100%{filter:drop-shadow(0 0 20px var(--accent));transform:translate(0,0);}2%{filter:drop-shadow(2px 0 #ff0055) drop-shadow(-2px 0 #00ffff);transform:translate(-2px,1px);}4%{filter:drop-shadow(0 0 20px var(--accent));transform:translate(0,0);}50%{filter:drop-shadow(0 0 30px var(--accent));transform:translate(0,0);}52%{filter:drop-shadow(-2px 0 #ff0055) drop-shadow(2px 0 #00ffff);transform:translate(2px,-1px);}54%{filter:drop-shadow(0 0 20px var(--accent));transform:translate(0,0);}}
+@keyframes logoShimmer{0%,100%{border-color:var(--accent);}50%{border-color:var(--teal);box-shadow:0 0 50px var(--teal),0 0 80px rgba(45,212,191,0.4);}}
+.loader-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:1px solid var(--accent);border-radius:50%;opacity:0.3;animation:ringPulse 2s ease-out infinite;}
+.loader-ring:nth-child(1){animation-delay:0s;}
+.loader-ring:nth-child(2){width:200px;height:200px;animation-delay:0.4s;}
+.loader-ring:nth-child(3){width:240px;height:240px;animation-delay:0.8s;}
+@keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(0.9);opacity:0.5;border-color:var(--accent);}100%{transform:translate(-50%,-50%) scale(1.3);opacity:0;border-color:var(--teal);}}
+.loader-brand{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-1px;text-shadow:0 0 30px var(--accent),0 0 60px var(--accent);}
+.loader-tagline{font-size:10px;color:#555;letter-spacing:5px;text-transform:uppercase;margin-bottom:35px;}
+.loader-bar-wrap{width:300px;height:4px;background:#111;border-radius:2px;overflow:hidden;margin-bottom:25px;position:relative;}
+.loader-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--teal),var(--accent));background-size:300% 100%;animation:barGlow 1.2s linear infinite;border-radius:2px;transition:width 0.3s ease;position:relative;}
+.loader-bar::after{content:'';position:absolute;right:0;top:0;bottom:0;width:20px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8));animation:barFlash 0.8s ease-in-out infinite;}
+@keyframes barGlow{0%{background-position:300% 0;}100%{background-position:-300% 0;}}
+@keyframes barFlash{0%,100%{opacity:0;}50%{opacity:1;}}
+.loader-percent{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:20px;letter-spacing:2px;}
+.loader-status{font-size:12px;color:#444;min-height:20px;letter-spacing:1px;transition:all 0.3s ease;margin-bottom:35px;animation:statusGlitch 4s ease-in-out infinite;}
+@keyframes statusGlitch{0%,90%,100%{opacity:1;text-shadow:none;}92%{opacity:0.8;text-shadow:1px 0 #ff0055,-1px 0 #00ffff;color:#fff;}94%{opacity:1;text-shadow:none;}}
+.loader-dots{display:flex;justify-content:center;gap:10px;margin-bottom:0;}
+.loader-dot{width:10px;height:10px;border-radius:50%;background:#1a1a1a;transition:all 0.4s ease;position:relative;}
+.loader-dot.active{background:var(--accent);box-shadow:0 0 20px var(--accent),0 0 40px var(--accent);transform:scale(1.4);}
+.loader-dot.active::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);animation:dotPulse 1s ease-out infinite;}
+.loader-dot.done{background:var(--teal);}
+@keyframes dotPulse{0%{transform:scale(1);opacity:1;}100%{transform:scale(2);opacity:0;}}
+.loader-particle{position:absolute;width:3px;height:3px;border-radius:50%;opacity:0;animation:particleFloat 6s ease-in-out infinite;}
+@keyframes particleFloat{0%{opacity:0;transform:translateY(0) scale(0);}20%{opacity:.8;}80%{opacity:.4;}100%{opacity:0;transform:translateY(-50px) scale(1.5);}}
+.loader-footer{position:absolute;bottom:40px;font-size:10px;color:#222;letter-spacing:3px;}
+</style>
+</head>
+<body data-theme="purple">
+
+<canvas id="bg-canvas"></canvas>
+<div class="orb" style="width:500px;height:500px;top:-180px;left:60px;background:radial-gradient(circle,rgba(124,92,252,.07),transparent 70%);animation-duration:9s"></div>
+<div class="orb" style="width:400px;height:400px;bottom:-120px;right:80px;background:radial-gradient(circle,rgba(45,212,191,.05),transparent 70%);animation-duration:12s"></div>
+<div class="orb" style="width:280px;height:280px;top:45%;left:35%;background:radial-gradient(circle,rgba(192,132,252,.04),transparent 70%);animation-duration:16s"></div>
+
+<!-- LOGIN SCREEN -->
+<div class="login-overlay" id="loginScreen">
+  <div class="login-bg"></div>
+  <div class="login-lines">
+    <div class="login-line" style="left:10%;height:200px;animation-delay:0s;"></div>
+    <div class="login-line" style="left:25%;height:150px;animation-delay:1s;"></div>
+    <div class="login-line" style="left:40%;height:180px;animation-delay:2s;"></div>
+    <div class="login-line" style="left:55%;height:120px;animation-delay:3s;"></div>
+    <div class="login-line" style="left:70%;height:200px;animation-delay:4s;"></div>
+    <div class="login-line" style="left:85%;height:160px;animation-delay:5s;"></div>
+  </div>
+  <div class="login-content">
+    <div class="login-logo-wrap">
+      <img class="login-logo" src="https://i.pinimg.com/736x/39/1a/71/391a71a51a5096b6d45193655d634b04.jpg" alt="NezzDev Logo">
+    </div>
+    <div class="login-title">NezzDev</div>
+    <div class="login-subtitle">Data Sales</div>
+    <div class="login-form">
+      <div class="login-error" id="loginError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="loginErrorMsg">ID atau Password salah!</span>
+      </div>
+      <div class="login-field">
+        <label>ID Admin</label>
+        <input type="text" id="loginId" placeholder="Masukkan ID Admin" autocomplete="off">
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Masukkan Password">
+      </div>
+      <button class="login-btn" id="loginBtn">
+        <span>Masuk</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      </button>
+    </div>
+    <div class="login-footer">NezzDev Systems v2.0 • Secure Access</div>
+  </div>
+  <div class="login-version">VERSION 2.0</div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div class="loader-overlay hidden" id="loaderScreen">
+  <div class="loader-bg"></div>
+  <div class="loader-scanline"></div>
+  <div class="loader-matrix" id="loaderMatrix"></div>
+  <div class="loader-particles" id="loaderParticles"></div>
+  <div class="loader-content">
+    <div class="loader-logo-wrap">
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+      <img class="loader-logo" src="https://i.pinimg.com/736x/39/1a/71/391a71a51a5096b6d45193655d634b04.jpg" alt="NezzDev Logo">
+    </div>
+    <div class="loader-brand">NezzDev</div>
+    <div class="loader-tagline">Memuat sistem...</div>
+    <div class="loader-percent" id="loaderPercent">0%</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loaderBar"></div>
+    </div>
+    <div class="loader-dots" id="loaderDots">
+      <div class="loader-dot active"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+    <div class="loader-status" id="loaderStatus">Memuat komponen UI...</div>
+  </div>
+  <div class="loader-footer">NEZZDEV SYSTEMS v2.0</div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <img class="logo-img" src="https://yt3.googleusercontent.com/uH2k-Yngw8C72-IVUBPBKKIO54EFRkCJks_RMEGPI5oRSqRKAuHrRbLwWb_n34Mhd_rO-o8YoA=s160-c-k-c0x00ffffff-no-rj" alt="NezzDev Profile" onerror="this.style.display='none'">
+    <div class="logo-text">
+      <div class="logo-mark">NezzDev</div>
+      <div class="logo-sub">Sales Manager</div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Dashboard</div>
+    <div class="nav-item active" onclick="switchTab('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Overview
+    </div>
+    <div class="nav-section" style="margin-top:8px">Penjualan</div>
+    <div class="nav-item" onclick="switchTab('transactions',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Transaksi
+    </div>
+    <div class="nav-section" style="margin-top:8px">Pre-Order</div>
+    <div class="nav-item" onclick="switchTab('preorder',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Daftar Pre-Order
+    </div>
+  </nav>
+  <div style="padding:0 .75rem">
+    <div style="border-top:1px solid var(--border);padding-top:12px;font-size:11.5px;color:var(--text3);text-align:center;display:flex;align-items:center;justify-content:center;gap:6px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:blink 2s infinite"></span>
+      Auto-save aktif
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="page-title"><span class="page-dot"></span><span id="page-title">Overview Dashboard</span></div>
+    <div class="topbar-right" style="display:flex;align-items:center;gap:12px;">
+      <div class="save-chip" id="last-saved-label">Tersimpan baru saja</div>
+      <div class="theme-dropdown" style="position:relative;">
+        <button class="btn theme-dropbtn" onclick="toggleThemeMenu()" style="display:flex;align-items:center;gap:6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+          Theme
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="theme-menu" id="themeMenu" style="display:none;position:absolute;right:0;top:calc(100% + 8px);background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:8px;min-width:180px;box-shadow:0 10px 40px rgba(0,0,0,0.5);z-index:200;">
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:4px 8px 8px;border-bottom:1px solid var(--border);margin-bottom:6px;">Pilih Tema</div>
+          <div class="theme-option" onclick="setTheme('pink',this)" data-theme="pink" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#ec4899,#f472b6);box-shadow:0 0 10px rgba(236,72,153,0.4);"></div>
+            <div>
+              <div style="font-size:13px;font-weight:500;">Pink Glamour</div>
+              <div style="font-size:10px;color:var(--text3);">Gaya feminin</div>
+            </div>
+          </div>
+          <div class="theme-option active" onclick="setTheme('purple',this)" data-theme="purple" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7c5cfc,#a78bfa);box-shadow:0 0 10px rgba(124,92,252,0.4);"></div>
+            <div>
+              <div style="font-size:13px;font-weight:500;">Purple Haze</div>
+              <div style="font-size:10px;color:var(--text3);">Elegan & modern</div>
+            </div>
+          </div>
+          <div class="theme-option" onclick="setTheme('black',this)" data-theme="black" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#333,#111);border:1px solid rgba(255,255,255,0.2);"></div>
+            <div>
+              <div style="font-size:13px;font-weight:500;">Midnight Black</div>
+              <div style="font-size:10px;color:var(--text3);">Minimalis & clean</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- DASHBOARD / OVERVIEW -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Pendapatan (Thn ini)</div><div class="stat-val" id="dash-total-rev" style="color:var(--accent2)">Rp 0</div><div class="stat-sub" id="dash-year-label">2025</div></div>
+        <div class="stat-card"><div class="stat-label">Total Transaksi</div><div class="stat-val" id="dash-total-tx">0</div><div class="stat-sub">Semua waktu</div></div>
+        <div class="stat-card"><div class="stat-label">Rata-rata Pendapatan</div><div class="stat-val" id="dash-avg-transaction">Rp 0</div><div class="stat-sub">Per Transaksi</div></div>
+        <div class="stat-card"><div class="stat-label">Rata-rata per Bulan</div><div class="stat-val" id="dash-avg-monthly">Rp 0</div><div class="stat-sub">Tahun ini</div></div>
+      </div>
+      <div class="stats-row" style="grid-template-columns: repeat(2, 1fr);">
+        <div class="stat-card"><div class="stat-label">Pre-Order Pending</div><div class="stat-val" id="dash-pending" style="color:var(--amber)">0</div><div class="stat-sub">Menunggu bayar</div></div>
+        <div class="stat-card"><div class="stat-label">Pre-Order Lunas</div><div class="stat-val" id="dash-paid" style="color:var(--green)">0</div><div class="stat-sub">Sudah dikonfirmasi</div></div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-head">
+          <div><div class="card-title">Pendapatan Bulanan</div><div style="font-size:12px;color:var(--text3);margin-top:2px" id="current-year-label">Tahun 2025</div></div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text3)"><span style="width:8px;height:8px;border-radius:2px;background:var(--accent);display:inline-block"></span>Pendapatan</div>
+        </div>
+        <div class="bar-chart" id="annual-bar-chart"></div>
+        <div style="display:flex;gap:5px;margin-top:6px" id="bar-labels"></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Transaksi Terbaru</div><button class="btn" onclick="switchTabById('monthly')" style="font-size:12px;padding:5px 10px">Lihat Semua</button></div>
+          <div id="recent-tx-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Status Pre-Order</div><span id="po-count-badge" class="badge badge-purple">0 total</span></div>
+          <div id="dash-po-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSAKSI (Gabungan Monthly + Annual + Quick Product) -->
+    <div class="panel" id="panel-transactions">
+      <div style="display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <div class="stat-card" style="flex:1;min-width:180px"><div class="stat-label">Total Pendapatan</div><div class="stat-val" id="tx-total-rev" style="color:var(--accent2)">Rp 0</div><div class="stat-sub" id="tx-year-label">2026</div></div>
+        <div class="stat-card" style="flex:1;min-width:180px"><div class="stat-label">Jumlah Transaksi</div><div class="stat-val" id="tx-count">0</div><div class="stat-sub">Semua waktu</div></div>
+        <div class="stat-card" style="flex:1;min-width:180px"><div class="stat-label">Rata-rata Transaksi</div><div class="stat-val" id="tx-avg">Rp 0</div><div class="stat-sub">per order</div></div>
+        <div class="stat-card" style="flex:1;min-width:180px"><div class="stat-label">Bulan Ini</div><div class="stat-val" id="tx-month-total" style="color:var(--teal)">Rp 0</div><div class="stat-sub" id="tx-month-label">—</div></div>
+      </div>
+
+      <!-- Form Tambah Transaksi -->
+      <div class="inline-form">
+        <div class="card-title" style="margin-bottom:1rem;display:flex;align-items:center;gap:7px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Transaksi Baru
+        </div>
+        <div class="form-row form-row-3">
+          <div class="field"><label>Nama Pembeli</label><input type="text" id="sale-buyer" placeholder="Nama pelanggan"></div>
+          <div class="field"><label>Pilih Produk</label><select id="sale-product-select" onchange="onProductSelect(this)"><option value="">— Pilih Produk —</option></select></div>
+          <div class="field"><label>Atau Ketik Manual</label><input type="text" id="sale-product" placeholder="Nama produk manual"></div>
+        </div>
+        <div class="form-row form-row-3" style="margin-top:10px">
+          <div class="field"><label>Jumlah (Rp)</label><input type="number" id="sale-amount" placeholder="0"></div>
+          <div class="field"><label>Tanggal Transaksi</label><input type="date" id="sale-date"></div>
+          <div class="field"><label>Kategori</label><select id="sale-category"><option>Produk</option><option>Jasa</option><option>Langganan</option><option>Lainnya</option></select></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px">
+          <button class="btn btn-primary" onclick="addSale()">Simpan Transaksi</button>
+        </div>
+      </div>
+
+      <!-- Filter & Statistik -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap;">
+        <select id="year-filter-tx" onchange="renderTransactions()" style="width:auto">
+          <option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option>
+        </select>
+        <select id="month-filter-tx" onchange="renderTransactions()" style="width:auto">
+          <option value="">Semua Bulan</option>
+          <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+          <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+          <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+          <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+        </select>
+        <input type="text" id="tx-search" placeholder="Cari transaksi..." style="width:180px" oninput="renderTransactions()">
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+          <label style="font-size:12px">Harian:</label>
+          <input type="date" id="daily-report-date" style="width:160px">
+          <button class="btn" onclick="renderDailyReport()" style="padding:5px 12px;">Tampilkan</button>
+        </div>
+      </div>
+
+      <!-- Laporan Harian -->
+      <div id="daily-report-panel" class="card" style="margin-bottom:1rem; display:none;">
+        <div class="card-head"><div class="card-title">📅 Laporan Penjualan Harian</div><span id="selected-date-label" style="font-size:12px; color:var(--text2)"></span></div>
+        <div class="stats-row" style="grid-template-columns:1fr 1fr; margin-bottom:0;">
+          <div class="stat-card"><div class="stat-label">Pendapatan Hari Ini</div><div class="stat-val" id="daily-total" style="color:var(--teal)">Rp 0</div></div>
+          <div class="stat-card"><div class="stat-label">Transaksi Hari Ini</div><div class="stat-val" id="daily-count">0</div></div>
+        </div>
+        <div id="daily-transaction-list" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- Daftar Transaksi -->
+      <div class="card"><div class="card-head"><div class="card-title">Daftar Transaksi</div></div><div class="tbl-wrap" id="tx-table-wrap"></div></div>
+
+      <!-- Tambah Produk -->
+      <div class="inline-form" style="margin-top:14px">
+        <div class="card-title" style="margin-bottom:1rem;display:flex;align-items:center;gap:7px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Produk Baru
+        </div>
+        <div class="form-row form-row-3">
+          <div class="field"><label>Nama Produk</label><input type="text" id="prod-name" placeholder="Nama produk/layanan"></div>
+          <div class="field"><label>Harga (Rp)</label><input type="number" id="prod-price" placeholder="0"></div>
+          <div class="field"><label>Kategori</label><select id="prod-category"><option>Produk Fisik</option><option>Produk Digital</option><option>Jasa</option><option>Langganan</option></select></div>
+        </div>
+        <div class="form-row form-row-2" style="margin-top:10px">
+          <div class="field"><label>Stok</label><input type="number" id="prod-stock" value="0" min="0"></div>
+          <div class="field"><label>Deskripsi</label><input type="text" id="prod-desc" placeholder="Deskripsi singkat..."></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn btn-primary" onclick="addProduct()">Simpan Produk</button></div>
+      </div>
+      <div id="product-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px"></div>
+
+      <!-- Grafik Tren -->
+      <div class="card" style="margin-top:14px"><div class="card-head"><div class="card-title">Tren Penjualan (Semua Tahun)</div></div><div style="position:relative;height:200px;padding:10px 0;"><canvas id="tx-area-chart" style="width:100%;height:100%;"></canvas></div></div>
+    </div>
+
+    <!-- PRE-ORDER -->
+    <div class="panel" id="panel-preorder">
+      <div class="inline-form">
+        <div class="card-title" style="margin-bottom:1rem;display:flex;align-items:center;gap:7px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Pre-Order Baru
+        </div>
+        <div class="form-row form-row-2">
+          <div class="field"><label>Nama Pembeli</label><input type="text" id="po-buyer" placeholder="Nama pembeli"></div>
+          <div class="field"><label>No. Telepon / WA</label><input type="text" id="po-phone" placeholder="08xx-xxxx-xxxx"></div>
+        </div>
+        <div class="form-row form-row-3" style="margin-top:10px">
+          <div class="field"><label>Qty</label><input type="number" id="po-qty" value="1" min="1"></div>
+          <div class="field"><label>Harga per Unit (Rp)</label><input type="number" id="po-price" placeholder="0"></div>
+          <div class="field"><label>Status Pembayaran</label><select id="po-status"><option value="pending">Pending — Belum Bayar</option><option value="paid">Lunas — Sudah Bayar</option></select></div>
+        </div>
+        <div class="field" style="margin-top:10px"><label>Catatan (alamat, varian, dll)</label><input type="text" id="po-note" placeholder="Detail order / pengiriman..."></div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn btn-primary" onclick="addPreOrder()">Simpan Pre-Order</button></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+        <input type="text" id="po-search" placeholder="Cari nama pembeli..." style="width:200px" oninput="renderPreOrder()">
+        <select id="po-filter" onchange="renderPreOrder()" style="width:auto"><option value="">Semua Status</option><option value="paid">Lunas ✓</option><option value="pending">Pending ⏳</option></select>
+      </div>
+      <div class="stats-row" style="margin-bottom:1rem">
+        <div class="stat-card"><div class="stat-label">Total PO</div><div class="stat-val" id="po-stat-total">0</div></div>
+        <div class="stat-card"><div class="stat-label">Lunas</div><div class="stat-val" id="po-stat-paid" style="color:var(--green)">0</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-val" id="po-stat-pending" style="color:var(--amber)">0</div></div>
+        <div class="stat-card"><div class="stat-label">Nilai Total</div><div class="stat-val" id="po-stat-value" style="color:var(--accent2);font-size:18px">Rp 0</div></div>
+      </div>
+      <div class="card"><div class="po-row po-head"><div>Pembeli</div><div>Qty</div><div>Nilai</div><div>Status</div><div>Aksi</div></div><div id="po-list"></div></div>
+    </div>
+
+      </div>
+</main>
+<div id="toast"><div class="tdot"></div><span id="toast-msg">Tersimpan!</span></div>
+
+<script>
+// CANVAS BACKGROUND
+(function(){
+  const c=document.getElementById('bg-canvas'),ctx=c.getContext('2d');
+  let W,H;
+  function rs(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+  rs();window.addEventListener('resize',rs);
+  const stars=Array.from({length:130},()=>({x:Math.random()*2500,y:Math.random()*1400,r:Math.random()*.85+.1,a:Math.random(),sp:Math.random()*.003+.001,ph:Math.random()*Math.PI*2}));
+  const blobs=[{x:.12,y:.18,r:320,c:'rgba(124,92,252,'},{x:.82,y:.72,r:260,c:'rgba(45,212,191,'},{x:.5,y:.45,r:210,c:'rgba(192,132,252,'},{x:.28,y:.82,r:170,c:'rgba(124,92,252,'}];
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);t+=.004;
+    blobs.forEach(b=>{
+      const bx=b.x*W+Math.sin(t*b.r*.003)*28,by=b.y*H+Math.cos(t*b.r*.002)*18;
+      const g=ctx.createRadialGradient(bx,by,0,bx,by,b.r);
+      g.addColorStop(0,b.c+'0.045)');g.addColorStop(1,b.c+'0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(bx,by,b.r,0,Math.PI*2);ctx.fill();
+    });
+    stars.forEach(s=>{
+      s.ph+=s.sp;
+      ctx.beginPath();ctx.arc(s.x%W,s.y%H,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,190,255,${s.a*(.45+.55*Math.sin(s.ph))})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// PARTICLES
+(function(){
+  function sp(){
+    const p=document.createElement('div');p.className='ptc';
+    const sz=Math.random()*4+2;
+    const cols=['rgba(124,92,252,','rgba(45,212,191,','rgba(192,132,252,'];
+    const col=cols[Math.floor(Math.random()*cols.length)];
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;background:radial-gradient(circle,${col}.7),transparent 70%);animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*4}s;opacity:0`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),(parseFloat(p.style.animationDuration)+parseFloat(p.style.animationDelay))*1000+500);
+  }
+  setInterval(sp,700);
+})();
+
+// ==================== DATA & STORAGE ====================
+let data={sales:[], preorders:[], products:[]};
+const MF=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const ML=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+function load(){
+  try{
+    const saved=localStorage.getItem('nz2_fixed');
+    if(saved) data=JSON.parse(saved);
+  }catch(e){console.warn(e);}
+  data.sales = data.sales || [];
+  data.preorders = data.preorders || [];
+  data.products = data.products || [];
+}
+function save(){
+  try{
+    localStorage.setItem('nz2_fixed',JSON.stringify(data));
+    const now=new Date();
+    const label=document.getElementById('last-saved-label');
+    if(label) label.textContent='Tersimpan '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    console.error('Save failed:',e);
+  }
+}
+
+// Theme switching
+function setTheme(theme, btn){
+  document.body.setAttribute('data-theme', theme);
+  document.querySelectorAll('.theme-option').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  localStorage.setItem('nz_theme', theme);
+}
+
+function toggleThemeMenu(){
+  const menu=document.getElementById('themeMenu');
+  const isHidden=menu.style.display==='none' || menu.style.display==='';
+  menu.style.display=isHidden?'block':'none';
+}
+
+// Close theme menu when clicking outside
+document.addEventListener('click',function(e){
+  const menu=document.getElementById('themeMenu');
+  const btn=document.querySelector('.theme-dropbtn');
+  if(menu && btn && !btn.contains(e.target) && !menu.contains(e.target)){
+    menu.style.display='none';
+  }
+});
+
+// Load saved theme
+function loadTheme(){
+  const saved=localStorage.getItem('nz_theme');
+  if(saved){
+    document.body.setAttribute('data-theme', saved);
+    document.querySelectorAll('.theme-option').forEach(b=>{
+      b.classList.toggle('active', b.dataset.theme===saved);
+    });
+  } else {
+    document.body.setAttribute('data-theme', 'purple');
+    document.querySelectorAll('.theme-option').forEach(b=>{
+      b.classList.toggle('active', b.dataset.theme==='purple');
+    });
+  }
+}
+const fmt=n=>'Rp '+Math.round(n).toLocaleString('id-ID');
+const ini=nm=>nm && nm.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'??';
+
+// ============ CRUD ============
+function addSale(){
+  const buyer=document.getElementById('sale-buyer')?.value.trim();
+  const product=document.getElementById('sale-product')?.value.trim();
+  const amount=parseFloat(document.getElementById('sale-amount')?.value)||0;
+  const dateStr=document.getElementById('sale-date')?.value;
+  const category=document.getElementById('sale-category')?.value;
+  const note=document.getElementById('sale-note')?.value.trim();
+  
+  if(!buyer){showToast('Masukkan nama pembeli');return;}
+  if(!product){showToast('Masukkan nama produk');return;}
+  if(!amount){showToast('Masukkan jumlah harga');return;}
+  if(!dateStr){showToast('Pilih tanggal transaksi');return;}
+
+  const productManual=document.getElementById('sale-product')?.value.trim()||'';
+  const productSelect=document.getElementById('sale-product-select')?.value||'';
+  const finalProduct=productSelect?data.products.find(p=>p.id==productSelect)?.name||productManual:productManual;
+
+  const saleObj={
+    id:Date.now(), buyer, product:finalProduct, amount, category, note,
+    date: dateStr,
+    month: new Date(dateStr).getMonth(),
+    year: new Date(dateStr).getFullYear()
+  };
+  data.sales.push(saleObj);
+  // Reset form
+  document.getElementById('sale-buyer').value='';
+  document.getElementById('sale-product').value='';
+  document.getElementById('sale-product-select').value='';
+  document.getElementById('sale-amount').value='';
+  save(); renderTransactions();
+  showToast('Transaksi berhasil ditambahkan');
+}
+
+function deleteSale(id){
+  if(confirm('Hapus transaksi ini?')){
+    data.sales=data.sales.filter(s=>s.id!==id);
+    save(); renderTransactions();
+  }
+}
+
+function addPreOrder(){
+  const buyer=document.getElementById('po-buyer')?.value.trim();
+  const phone=document.getElementById('po-phone')?.value.trim();
+  const product=document.getElementById('po-product')?.value.trim();
+  const qty=parseInt(document.getElementById('po-qty')?.value)||1;
+  const price=parseFloat(document.getElementById('po-price')?.value)||0;
+  const status=document.getElementById('po-status')?.value;
+  const note=document.getElementById('po-note')?.value.trim();
+  
+  if(!buyer){showToast('Masukkan nama pembeli');return;}
+  if(!product){showToast('Masukkan nama produk');return;}
+  if(!price){showToast('Masukkan harga produk');return;}
+  
+  data.preorders.push({id:Date.now(),buyer,phone,product,qty,price,status,note});
+  document.getElementById('po-buyer').value='';
+  document.getElementById('po-phone').value='';
+  document.getElementById('po-product').value='';
+  document.getElementById('po-note').value='';
+  document.getElementById('po-qty').value='1';
+  document.getElementById('po-price').value='';
+  save(); renderAll();
+  showToast('Pre-order berhasil ditambahkan');
+}
+
+function togglePOStatus(id){
+  const p=data.preorders.find(x=>x.id===id);
+  if(p){p.status=p.status==='paid'?'pending':'paid';save();renderAll();}
+}
+
+function deletePO(id){
+  if(confirm('Hapus pre-order ini?')){
+    data.preorders=data.preorders.filter(p=>p.id!==id);
+    save(); renderPreOrder();
+  }
+}
+
+function addProduct(){
+  const name=document.getElementById('prod-name')?.value.trim();
+  const price=parseFloat(document.getElementById('prod-price')?.value)||0;
+  const category=document.getElementById('prod-category')?.value;
+  const stock=parseInt(document.getElementById('prod-stock')?.value)||0;
+  const desc=document.getElementById('prod-desc')?.value.trim();
+
+  if(!name){showToast('Masukkan nama produk');return;}
+  if(!price){showToast('Masukkan harga produk');return;}
+
+  const newProduct={id:Date.now(),name,price,category,stock,desc};
+  data.products.push(newProduct);
+  document.getElementById('prod-name').value='';
+  document.getElementById('prod-desc').value='';
+  document.getElementById('prod-price').value='';
+  document.getElementById('prod-stock').value=0;
+  document.getElementById('prod-category').selectedIndex=0;
+  save();
+  renderProducts();
+  renderTransactions();
+  showToast('Produk berhasil ditambahkan');
+}
+
+function deleteProduct(id){
+  if(confirm('Hapus produk ini?')){
+    data.products=data.products.filter(p=>p.id!==id);
+    save(); renderProducts(); renderTransactions();
+  }
+}
+
+// ============ RENDER FUNCTIONS ============
+function renderDashboard(){
+  const currentYear=new Date().getFullYear();
+  const yearLabel=document.getElementById('dash-year-label');
+  const yearLabel2=document.getElementById('current-year-label');
+  if(yearLabel) yearLabel.innerText=currentYear;
+  if(yearLabel2) yearLabel2.innerText='Tahun '+currentYear;
+  
+  const salesThisYear=data.sales.filter(s=>s.year===currentYear);
+  const totalRevYear=salesThisYear.reduce((a,s)=>a+s.amount,0);
+  document.getElementById('dash-total-rev').textContent=fmt(totalRevYear);
+  document.getElementById('dash-total-tx').textContent=data.sales.length;
+  
+  const avgTransaction=data.sales.length?data.sales.reduce((a,s)=>a+s.amount,0)/data.sales.length:0;
+  document.getElementById('dash-avg-transaction').textContent=fmt(avgTransaction);
+  
+  const monthsWithSales=new Set(salesThisYear.map(s=>s.month));
+  const avgMonthly=monthsWithSales.size?totalRevYear/monthsWithSales.size:0;
+  document.getElementById('dash-avg-monthly').textContent=fmt(avgMonthly);
+  
+  document.getElementById('dash-pending').textContent=data.preorders.filter(p=>p.status==='pending').length;
+  document.getElementById('dash-paid').textContent=data.preorders.filter(p=>p.status==='paid').length;
+  
+  // Chart
+  const monthlyData=Array(12).fill(0);
+  salesThisYear.forEach(s=>monthlyData[s.month]+=s.amount);
+  const maxVal=Math.max(...monthlyData,1);
+  const chartDiv=document.getElementById('annual-bar-chart');
+  const labelDiv=document.getElementById('bar-labels');
+  if(chartDiv && labelDiv){
+    chartDiv.innerHTML=''; labelDiv.innerHTML='';
+    monthlyData.forEach((val,i)=>{
+      const wrap=document.createElement('div');wrap.className='bar-wrap';
+      const bar=document.createElement('div');bar.className='bar bar-grow';
+      bar.style.height=Math.max((val/maxVal)*100,2)+'%';
+      bar.dataset.tip=fmt(val);
+      wrap.appendChild(bar);chartDiv.appendChild(wrap);
+      const lbl=document.createElement('div');lbl.className='bar-label';lbl.textContent=ML[i];
+      labelDiv.appendChild(lbl);
+    });
+  }
+  
+  const recentSales=[...data.sales].sort((a,b)=>b.id-a.id).slice(0,5);
+  const recentDiv=document.getElementById('recent-tx-list');
+  if(recentDiv){
+    recentDiv.innerHTML=recentSales.length?recentSales.map(s=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:9px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${ini(s.buyer)}</div><div><div style="font-size:13px;font-weight:500">${s.buyer}</div><div style="font-size:11px;color:var(--text3)">${s.product} · ${s.date}</div></div></div>
+      <div style="font-size:13px;font-weight:600;color:var(--accent2)">${fmt(s.amount)}</div></div>`).join(''):'<div class="empty"><p>Belum ada transaksi</p></div>';
+  }
+  
+  const recentPO=[...data.preorders].sort((a,b)=>b.id-a.id).slice(0,5);
+  const poDiv=document.getElementById('dash-po-list');
+  if(poDiv){
+    poDiv.innerHTML=recentPO.length?recentPO.map(p=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;gap:9px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${ini(p.buyer)}</div><div><div style="font-size:13px;font-weight:500">${p.buyer}</div><div style="font-size:11px;color:var(--text3)">Qty: ${p.qty}</div></div></div>
+      <span class="badge ${p.status==='paid'?'badge-green':'badge-amber'}"><span class="badge-dot"></span>${p.status==='paid'?'Lunas':'Pending'}</span></div>`).join(''):'<div class="empty"><p>Belum ada pre-order</p></div>';
+  }
+  const countBadge=document.getElementById('po-count-badge');
+  if(countBadge) countBadge.innerHTML=data.preorders.length+' total';
+}
+
+function renderMonthly(){
+  const year=parseInt(document.getElementById('year-filter-monthly')?.value||2025);
+  const monthFilter=document.getElementById('month-filter')?.value;
+  const search=document.getElementById('tx-search')?.value.toLowerCase()||'';
+  
+  let filtered=data.sales.filter(s=>s.year===year);
+  if(monthFilter && monthFilter!=='') filtered=filtered.filter(s=>s.month===parseInt(monthFilter));
+  if(search) filtered=filtered.filter(s=>s.buyer.toLowerCase().includes(search)||s.product.toLowerCase().includes(search));
+  
+  const total=filtered.reduce((a,s)=>a+s.amount,0);
+  document.getElementById('monthly-total').textContent=fmt(total);
+  document.getElementById('monthly-count').textContent=filtered.length;
+  document.getElementById('monthly-avg').textContent=fmt(filtered.length?total/filtered.length:0);
+  const periodText=monthFilter && monthFilter!==''?`${MF[parseInt(monthFilter)]} ${year}`:`Tahun ${year}`;
+  document.getElementById('monthly-period').textContent=periodText;
+  
+  const tableWrap=document.getElementById('monthly-table-wrap');
+  if(!tableWrap) return;
+  if(!filtered.length){tableWrap.innerHTML='<div class="empty"><p>Tidak ada data</p></div>';return;}
+  tableWrap.innerHTML=`<table><thead><tr><th>Tanggal</th><th>Pembeli</th><th>Produk</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody>
+    ${filtered.sort((a,b)=>b.id-a.id).map(s=>`<tr><td style="white-space:nowrap">${s.date}</td>
+    <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:10px">${ini(s.buyer)}</div>${s.buyer}</div></td>
+    <td>${s.product}${s.note?`<div class="note">${s.note}</div>`:''}</td>
+    <td style="font-weight:600;color:var(--accent2)">${fmt(s.amount)}</td>
+    <td><button class="icon-btn" onclick="deleteSale(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderDailyReport(){
+  const date=document.getElementById('daily-report-date')?.value;
+  if(!date){showToast('Pilih tanggal terlebih dahulu');return;}
+  const salesOnDate=data.sales.filter(s=>s.date===date);
+  const total=salesOnDate.reduce((a,s)=>a+s.amount,0);
+  document.getElementById('daily-total').textContent=fmt(total);
+  document.getElementById('daily-count').textContent=salesOnDate.length;
+  const labelSpan=document.getElementById('selected-date-label');
+  if(labelSpan) labelSpan.innerHTML=`📆 ${new Date(date).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
+  const container=document.getElementById('daily-transaction-list');
+  if(!container) return;
+  if(!salesOnDate.length){container.innerHTML='<div class="empty">Tidak ada penjualan pada tanggal ini</div>';}
+  else{container.innerHTML=salesOnDate.map(s=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><div><strong>${s.buyer}</strong><div style="font-size:12px;color:var(--text2)">${s.product}</div></div><div style="font-weight:600;color:var(--teal)">${fmt(s.amount)}</div></div>`).join('');}
+  const panel=document.getElementById('daily-report-panel');
+  if(panel) panel.style.display='block';
+}
+
+function renderTransactions(){
+  // Update stats
+  const totalAll=data.sales.reduce((a,s)=>a+s.amount,0);
+  const avgTx=data.sales.length?totalAll/data.sales.length:0;
+  document.getElementById('tx-total-rev').textContent=fmt(totalAll);
+  document.getElementById('tx-count').textContent=data.sales.length;
+  document.getElementById('tx-avg').textContent=fmt(avgTx);
+
+  const year=parseInt(document.getElementById('year-filter-tx')?.value||2026);
+  const monthFilter=document.getElementById('month-filter-tx')?.value;
+  const search=document.getElementById('tx-search')?.value.toLowerCase()||'';
+
+  // Monthly stat
+  const currentMonth=new Date().getMonth();
+  const currentYear=new Date().getFullYear();
+  const thisMonthSales=data.sales.filter(s=>s.year===currentYear&&s.month===currentMonth);
+  const monthTotal=thisMonthSales.reduce((a,s)=>a+s.amount,0);
+  document.getElementById('tx-month-total').textContent=fmt(monthTotal);
+  document.getElementById('tx-month-label').textContent=MF[currentMonth]+' '+currentYear;
+  document.getElementById('tx-year-label').textContent=year;
+
+  // Filter sales
+  let filtered=data.sales.filter(s=>s.year===year);
+  if(monthFilter&&monthFilter!=='') filtered=filtered.filter(s=>s.month===parseInt(monthFilter));
+  if(search) filtered=filtered.filter(s=>s.buyer.toLowerCase().includes(search)||s.product.toLowerCase().includes(search)||(s.note&&s.note.toLowerCase().includes(search)));
+
+  // Render table
+  const tableWrap=document.getElementById('tx-table-wrap');
+  if(!tableWrap) return;
+  if(!filtered.length){tableWrap.innerHTML='<div class="empty"><p>Tidak ada transaksi</p></div>';}
+  else{
+    tableWrap.innerHTML=`<table><thead><tr><th>Tanggal</th><th>Pembeli</th><th>Produk</th><th>Kategori</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody>
+      ${filtered.sort((a,b)=>b.id-a.id).map(s=>`<tr>
+        <td style="white-space:nowrap">${s.date}</td>
+        <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:10px">${ini(s.buyer)}</div>${s.buyer}</div></td>
+        <td>${s.product}${s.note?`<div class="note">${s.note||''}</div>`:''}</td>
+        <td><span class="badge badge-purple">${s.category||'Produk'}</span></td>
+        <td style="font-weight:600;color:var(--accent2)">${fmt(s.amount)}</td>
+        <td><button class="icon-btn" onclick="deleteSale(${s.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td>
+      </tr>`).join('')}</tbody></table>`;
+  }
+
+  // Update product select
+  const prodSelect=document.getElementById('sale-product-select');
+  if(prodSelect){
+    prodSelect.innerHTML='<option value="">— Pilih Produk —</option>'+data.products.map(p=>`<option value="${p.id}" data-price="${p.price}">${p.name} - ${fmt(p.price)}</option>`).join('');
+  }
+
+  // Render products
+  renderProducts();
+
+  // Draw area chart
+  drawTxAreaChart();
+}
+
+function drawTxAreaChart(){
+  const canvas=document.getElementById('tx-area-chart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const rect=canvas.parentElement.getBoundingClientRect();
+  canvas.width=rect.width;
+  canvas.height=180;
+  const w=canvas.width,h=canvas.height,padding=40;
+
+  const monthlyData=Array(12).fill(0);
+  data.sales.forEach(s=>monthlyData[s.month]+=s.amount);
+  const maxVal=Math.max(...monthlyData,1);
+
+  ctx.clearRect(0,0,w,h);
+
+  const accentColor=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#7c5cfc';
+  const accent2Color=getComputedStyle(document.documentElement).getPropertyValue('--accent2').trim()||'#a78bfa';
+  const tealColor=getComputedStyle(document.documentElement).getPropertyValue('--teal').trim()||'#2dd4bf';
+  const text2Color=getComputedStyle(document.documentElement).getPropertyValue('--text2').trim()||'#8e8aad';
+
+  const grad=ctx.createLinearGradient(0,padding,0,h-padding);
+  grad.addColorStop(0,accentColor);
+  grad.addColorStop(1,'transparent');
+
+  const gradLine=ctx.createLinearGradient(0,0,w,0);
+  gradLine.addColorStop(0,accentColor);
+  gradLine.addColorStop(0.5,accent2Color);
+  gradLine.addColorStop(1,tealColor);
+
+  const stepX=(w-padding*2)/11;
+  const pts=monthlyData.map((v,i)=>({x:padding+i*stepX,y:h-padding-(v/maxVal)*(h-padding*2)}));
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.05)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=padding+i*((h-padding*2)/4);
+    ctx.beginPath();ctx.moveTo(padding,y);ctx.lineTo(w-padding,y);ctx.stroke();
+  }
+
+  // Area
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x,h-padding);
+  pts.forEach(p=>ctx.lineTo(p.x,p.y));
+  ctx.lineTo(pts[11].x,h-padding);
+  ctx.closePath();
+  ctx.fillStyle=grad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+  ctx.strokeStyle=gradLine;
+  ctx.lineWidth=2.5;
+  ctx.lineJoin='round';
+  ctx.stroke();
+
+  // Dots & labels
+  pts.forEach((p,i)=>{
+    if(monthlyData[i]>0){
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,4,0,Math.PI*2);
+      ctx.fillStyle=gradLine;
+      ctx.fill();
+      ctx.fillStyle=text2Color;
+      ctx.font='10px DM Sans';
+      ctx.textAlign='center';
+      ctx.fillText(ML[i],p.x,h-padding+15);
+    }
+  });
+}
+
+function onProductSelect(el){
+  if(el.value){
+    const opt=el.options[el.selectedIndex];
+    const price=opt.dataset.price;
+    document.getElementById('sale-product').value=opt.text.split(' - ')[0];
+    document.getElementById('sale-amount').value=price||'';
+  }
+}
+
+function renderPreOrder(){
+  const q=document.getElementById('po-search')?.value.toLowerCase()||'';
+  const statusFilter=document.getElementById('po-filter')?.value||'';
+  let list=data.preorders.filter(p=>{
+    if(q && !p.buyer.toLowerCase().includes(q) && !p.product.toLowerCase().includes(q)) return false;
+    if(statusFilter && p.status!==statusFilter) return false;
+    return true;
+  }).sort((a,b)=>b.id-a.id);
+  
+  document.getElementById('po-stat-total').innerHTML=data.preorders.length;
+  document.getElementById('po-stat-paid').innerHTML=data.preorders.filter(p=>p.status==='paid').length;
+  document.getElementById('po-stat-pending').innerHTML=data.preorders.filter(p=>p.status==='pending').length;
+  document.getElementById('po-stat-value').innerHTML=fmt(data.preorders.reduce((a,p)=>a+p.price*p.qty,0));
+  
+  const container=document.getElementById('po-list');
+  if(!container) return;
+  if(!list.length){container.innerHTML='<div class="empty">Tidak ada pre-order</div>';return;}
+  container.innerHTML=list.map(p=>`<div class="po-row">
+    <div class="buyer-name"><div class="avatar">${ini(p.buyer)}</div><div><div style="font-weight:500">${p.buyer}</div><div style="font-size:11px;color:var(--text3)">${p.phone||'-'}</div>${p.note?`<div class="note">${p.note}</div>`:''}</div></div>
+    <div>×${p.qty}</div><div style="font-weight:600;color:var(--accent2)">${fmt(p.price*p.qty)}</div>
+    <div><span class="badge ${p.status==='paid'?'badge-green':'badge-amber'}"><span class="badge-dot"></span>${p.status==='paid'?'Lunas':'Pending'}</span></div>
+    <div class="actions-cell"><button class="check-btn ${p.status==='paid'?'paid':''}" onclick="togglePOStatus(${p.id})">${p.status==='paid'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>'}</button><button class="icon-btn" onclick="deletePO(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></div>`).join('');
+}
+
+function renderProducts(){
+  const grid=document.getElementById('product-grid');
+  if(!grid) return;
+  if(!data.products.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><p>Belum ada produk. Silakan tambah produk baru di atas.</p></div>';return;}
+  grid.innerHTML=data.products.map(p=>`<div class="card"><div style="display:flex;justify-content:space-between;"><div><div style="font-family:Syne;font-weight:600">${p.name}</div><span class="badge badge-purple">${p.category}</span></div><button class="icon-btn" onclick="deleteProduct(${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div><div style="font-size:20px;font-weight:700;color:var(--accent2);margin:10px 0">${fmt(p.price)}</div>${p.desc?`<div style="font-size:12px;color:var(--text2)">${p.desc}</div>`:''}<div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:${Math.min(100, p.stock/10*100)}%"></div></div><div style="display:flex;justify-content:space-between;margin-top:6px"><span>Stok</span><span style="color:${p.stock>0?'var(--green)':'var(--red)'}">${p.stock} unit</span></div></div>`).join('');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  if(!t) return;
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(window.ttt);
+  window.ttt=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function renderAll(){
+  renderDashboard();
+  renderTransactions();
+  renderPreOrder();
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const panel=document.getElementById('panel-'+id);
+  if(panel) panel.classList.add('active');
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Overview Dashboard',transactions:'Transaksi',preorder:'Daftar Pre-Order'};
+  const titleSpan=document.getElementById('page-title');
+  if(titleSpan) titleSpan.textContent=titles[id]||'Dashboard';
+  renderAll();
+}
+
+function switchTabById(id){
+  const navs=document.querySelectorAll('.nav-item');
+  const ids=['dashboard','transactions','preorder'];
+  const idx=ids.indexOf(id);
+  if(idx>=0) switchTab(id,navs[idx]);
+}
+
+// LOGIN SYSTEM
+const VALID_ID='NezzDev';
+const VALID_PASS='onesganteng123';
+
+function attemptLogin(){
+  const id=document.getElementById('loginId')?.value.trim();
+  const pass=document.getElementById('loginPassword')?.value;
+  const error=document.getElementById('loginError');
+  const errorMsg=document.getElementById('loginErrorMsg');
+  const btn=document.getElementById('loginBtn');
+
+  if(!id || !pass){
+    errorMsg.textContent='Masukkan ID dan Password!';
+    error.classList.add('show');
+    setTimeout(()=>error.classList.remove('show'),3000);
+    return;
+  }
+
+  if(id!==VALID_ID || pass!==VALID_PASS){
+    errorMsg.textContent='ID atau Password salah!';
+    error.classList.add('show');
+    error.style.animation='none';
+    setTimeout(()=>error.style.animation='shake 0.5s ease',10);
+    setTimeout(()=>error.classList.remove('show'),3000);
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.innerHTML='<span>Memuat...</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10" stroke-dasharray="40" stroke-dashoffset="10"/></svg>';
+
+  setTimeout(()=>{
+    const loginScreen=document.getElementById('loginScreen');
+    if(loginScreen) loginScreen.classList.add('hidden');
+    setTimeout(()=>loginScreen?.remove(),800);
+
+    const loaderScreen=document.getElementById('loaderScreen');
+    if(loaderScreen) loaderScreen.classList.remove('hidden');
+    startLoading();
+  },500);
+}
+
+// Enter key for login
+document.getElementById('loginPassword')?.addEventListener('keypress',(e)=>{
+  if(e.key==='Enter') attemptLogin();
+});
+
+// Click event for login button
+document.getElementById('loginBtn')?.addEventListener('click',function(){
+  attemptLogin();
+});
+
+// Create loading Matrix columns
+(function(){
+  const container=document.getElementById('loaderMatrix');
+  if(!container) return;
+  const cols=10;
+  const chars='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+  for(let i=0;i<cols;i++){
+    const col=document.createElement('div');
+    col.className='loader-col';
+    col.style.left=(i*(100/cols))+'%';
+    col.style.width=(100/cols)+'%';
+    let txt='';
+    for(let j=0;j<30;j++) txt+=chars[Math.floor(Math.random()*chars.length)]+'<br>';
+    col.innerHTML=txt;
+    col.style.animationDuration=(Math.random()*8+5)+'s';
+    col.style.animationDelay=Math.random()*5+'s';
+    container.appendChild(col);
+  }
+})();
+
+// Create loading particles
+(function(){
+  const container=document.getElementById('loaderParticles');
+  if(!container) return;
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');
+    p.className='loader-particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.top=Math.random()*100+'%';
+    p.style.animationDelay=Math.random()*6+'s';
+    p.style.background=['#7c5cfc','#a78bfa','#2dd4bf','#c084fc'][Math.floor(Math.random()*4)];
+    container.appendChild(p);
+  }
+})();
+
+// LOADING SYSTEM
+function startLoading(){
+  const loaderBar=document.getElementById('loaderBar');
+  const loaderStatus=document.getElementById('loaderStatus');
+  const loaderPercent=document.getElementById('loaderPercent');
+  const loaderDots=document.querySelectorAll('.loader-dot');
+
+  const messages=[
+    ''
+  ];
+
+  let progress=0;
+  const totalTime=5000;
+  const interval=50;
+  const steps=totalTime/interval;
+
+  const loadingInterval=setInterval(()=>{
+    progress++;
+    const percent=Math.round((progress/steps)*100);
+    loaderBar.style.width=percent+'%';
+    loaderPercent.textContent=percent+'%';
+
+    const msgIndex=Math.floor((progress/steps)*(messages.length-1));
+    loaderStatus.textContent=messages[msgIndex];
+
+    const activeDotIndex=Math.floor((progress/steps)*(loaderDots.length-1));
+    loaderDots.forEach((dot,i)=>{
+      dot.classList.remove('active','done');
+      if(i<activeDotIndex) dot.classList.add('done');
+      if(i===activeDotIndex) dot.classList.add('active');
+    });
+
+    if(progress>=steps){
+      clearInterval(loadingInterval);
+      loaderStatus.textContent='';
+      loaderPercent.textContent='100%';
+      loaderBar.style.width='100%';
+      loaderDots.forEach(dot=>dot.classList.add('done'));
+
+      setTimeout(()=>{
+        const loaderScreen=document.getElementById('loaderScreen');
+        if(loaderScreen){
+          loaderScreen.classList.add('hidden');
+          setTimeout(()=>{
+            loaderScreen.remove();
+            initApp();
+            renderAll();
+          },800);
+        }
+      },500);
+    }
+  },interval);
+}
+
+function initApp(){
+  load();
+  loadTheme();
+  renderAll();
+  const todayDate=new Date().toISOString().slice(0,10);
+  const saleDateInput=document.getElementById('sale-date');
+  const dailyDateInput=document.getElementById('daily-report-date');
+  if(saleDateInput) saleDateInput.value=todayDate;
+  if(dailyDateInput) dailyDateInput.value=todayDate;
+
+  const currentYr=new Date().getFullYear();
+  const yearFilter=document.getElementById('year-filter-monthly');
+  if(yearFilter){
+    if(![...yearFilter.options].some(o=>o.value==currentYr.toString())){
+      const opt=document.createElement('option');
+      opt.value=currentYr;
+      opt.text=currentYr;
+      yearFilter.appendChild(opt);
+    }
+    yearFilter.value=currentYr;
+  }
+}
+
+// CSS for login spin animation and shake
+const style=document.createElement('style');
+style.textContent='@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}@keyframes shake{0%,100%{transform:translateX(0);}10%,30%,50%,70%,90%{transform:translateX(-6px);}20%,40%,60%,80%{transform:translateX(6px);}}';
+document.head.appendChild(style);
+
+// INIT - hide all, wait for login
+load();
+</script> 
+</body> 
+</html>
